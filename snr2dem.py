@@ -40,10 +40,10 @@ def processData(x, y, a, d, d_valid, gridSize, dDif):
             dd = math.fabs(cd - ld) / dist
             if dist >= gridSize or dd >= dDif:
                 tlat, tlon = xy2deg(x[i], y[i])
-                lat.append(tlat)
-                lon.append(tlon)
-                alt.append(a[i] * 0.3048)
-                depth.append(cd)
+                lat.append(round(tlat, 9))
+                lon.append(round(tlon, 9))
+                alt.append(round(a[i] * 0.3048, 3))
+                depth.append(round(cd, 3))
                 lx = x[i]
                 ly = y[i]
                 ld = cd
