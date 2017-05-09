@@ -11,12 +11,12 @@ def xy2deg(x, y):  # Convert XY to LatLon deg
     rad2deg = 57.295779513082321
     earthRad = 6356752.3142
 
-    lat = float(x / earthRad)
+    lat = float(y / earthRad)
     lat = num.exp(lat)
     lat = (2 * num.arctan(lat)) - (num.pi / 2)
     lat = lat * rad2deg
 
-    lon = float(y)
+    lon = float(x)
     lon = lon / earthRad * rad2deg
 
     return lat, lon
