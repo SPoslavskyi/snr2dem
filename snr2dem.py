@@ -22,9 +22,10 @@ def xy2deg(x, y):  # Convert XY to LatLon deg
     return lat, lon
 
 
-def processData(x, y, d, d_valid, gridSize, dDif):
+def processData(x, y, a, d, d_valid, gridSize, dDif):
     lat = []
     lon = []
+    alt = []
     depth = []
     lx = 0
     ly = 0
@@ -41,21 +42,23 @@ def processData(x, y, d, d_valid, gridSize, dDif):
                 tlat, tlon = xy2deg(x[i], y[i])
                 lat.append(tlat)
                 lon.append(tlon)
+                alt.append(a[i] * 0.3048)
                 depth.append(cd)
                 lx = x[i]
                 ly = y[i]
                 ld = cd
 
-    return lat, lon, depth
+    return lat, lon, alt, depth
 
 
-snrFile = 'Sonar0001.sl2.csv'
-gridSize = 10
-dDif = 0.5
+snrFile = 'Sonar0002.sl2.csv'
+gridSize = 20
+dDif = 1
 
 snrData = pandas.read_csv(snrFile)
 posX = snrData['PositionX']
 posY = snrData['PositionY']
+alt_ft = snrData['Altitude[ft]']
 depth_ft = snrData['Depth[ft]']
 depth_valid = snrData['DepthValid']
 
@@ -65,6 +68,9 @@ else:
     print('Bad data file!')
     exit()
 
-lat, lon, depth = processData(posX, posY, depth_ft, depth_valid, gridSize, dDif)
+lat, lon, alt, depth = processData(posX, posY, alt_ft, depth_ft, depth_valid, gridSize, dDif)
 
-print(lat, lon)
+print(len(lat), 'points from ', MAX, ' selected.')
+
+demData = pandas.DataFrame({'lat':lat,'lon':lon, 'alt':alt,'depth':depth})
+demData.to_csv('demData.txt', columns = ('lat', 'lon', 'alt','depth'), sep= '\t')
