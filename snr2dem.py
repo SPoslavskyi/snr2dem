@@ -22,7 +22,7 @@ def xy2deg(x, y):  # Convert XY to LatLon deg
     return lat, lon
 
 
-def processData(x, y, a, d, d_valid, gridSize, dDif):
+def processData(x, y, a, d, d_valid, gridSize, dDif, sensorDepth):
     lat = []
     lon = []
     alt = []
@@ -43,7 +43,7 @@ def processData(x, y, a, d, d_valid, gridSize, dDif):
                 lat.append(round(tlat, 9))
                 lon.append(round(tlon, 9))
                 alt.append(round(a[i] * 0.3048, 3))
-                depth.append(round(cd, 3))
+                depth.append(round(cd+sensorDepth, 3))
                 lx = x[i]
                 ly = y[i]
                 ld = cd
@@ -51,9 +51,10 @@ def processData(x, y, a, d, d_valid, gridSize, dDif):
     return lat, lon, alt, depth
 
 
-snrFile = 'Sonar0002.sl2.csv'
-gridSize = 20
-dDif = 1
+snrFile = 'Sonar0000.sl2.csv'   # Data file name
+gridSize = 25                   # Points decimation grid size in meters
+dDif = 0.5                      # Slope detection ratio meters/meter
+sensorDepth = 0.1               # Sonar sensor depth in meters
 
 snrData = pandas.read_csv(snrFile)
 posX = snrData['PositionX']
@@ -62,15 +63,16 @@ alt_ft = snrData['Altitude[ft]']
 depth_ft = snrData['Depth[ft]']
 depth_valid = snrData['DepthValid']
 
+MAX = 0
 if posX.size == posY.size:
     MAX = posX.size
 else:
     print('Bad data file!')
     exit()
 
-lat, lon, alt, depth = processData(posX, posY, alt_ft, depth_ft, depth_valid, gridSize, dDif)
+lat, lon, alt, depth = processData(posX, posY, alt_ft, depth_ft, depth_valid, gridSize, dDif, sensorDepth)
 
 print(len(lat), 'points from ', MAX, ' selected.')
 
 demData = pandas.DataFrame({'lat':lat,'lon':lon, 'alt':alt,'depth':depth})
-demData.to_csv('demData.txt', columns = ('lat', 'lon', 'alt','depth'), sep= '\t')
+demData.to_csv('demData.txt', columns=('lat', 'lon', 'alt', 'depth'), sep='\t')
