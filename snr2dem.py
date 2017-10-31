@@ -75,4 +75,4 @@ lat, lon, alt, depth = processData(posX, posY, alt_ft, depth_ft, depth_valid, gr
 print(len(lat), 'points from ', MAX, ' selected.')
 
 demData = pandas.DataFrame({'lat':lat,'lon':lon, 'alt':alt,'depth':depth})
-demData.to_csv('demData.txt', columns=('lat', 'lon', 'alt', 'depth'), sep='\t')
+demData.to_csv(snrFile+'.txt', columns=('lat', 'lon', 'alt', 'depth'), sep='\t')
