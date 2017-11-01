@@ -43,7 +43,7 @@ def processData(x, y, a, d, d_valid, gridSize, dDif, sensorDepth):
                 lat.append(round(tlat, 9))
                 lon.append(round(tlon, 9))
                 alt.append(round(a[i] * 0.3048, 3))
-                depth.append(round(cd+sensorDepth, 3))
+                depth.append(round(-1*(cd+sensorDepth), 3))
                 lx = x[i]
                 ly = y[i]
                 ld = cd
@@ -51,7 +51,7 @@ def processData(x, y, a, d, d_valid, gridSize, dDif, sensorDepth):
     return lat, lon, alt, depth
 
 
-snrFile = 'Sonar0000.sl2.csv'   # Data file name
+snrFile = 'Sonar0004.sl2.csv'   # Data file name
 gridSize = 25                   # Points decimation grid size in meters
 dDif = 0.5                      # Slope detection ratio meters/meter
 sensorDepth = 0.1               # Sonar sensor depth in meters
