@@ -22,7 +22,7 @@ def xy2deg(x, y):  # Convert XY to LatLon deg
     return lat, lon
 
 
-def processData(x, y, a, d, d_valid, gridSize, dDif, sensorDepth):
+def processData(x, y, a, d, d_valid, gridSize, dDif, sensorDepth, maxDepth):
     lat = []
     lon = []
     alt = []
@@ -39,14 +39,15 @@ def processData(x, y, a, d, d_valid, gridSize, dDif, sensorDepth):
             cd = d[i] * 0.3048  # Converts ft to m
             dd = math.fabs(cd - ld) / dist
             if dist >= gridSize or dd >= dDif:
-                tlat, tlon = xy2deg(x[i], y[i])
-                lat.append(round(tlat, 9))
-                lon.append(round(tlon, 9))
-                alt.append(round(a[i] * 0.3048, 3))
-                depth.append(round(-1*(cd+sensorDepth), 3))
-                lx = x[i]
-                ly = y[i]
-                ld = cd
+                if cd <= maxDepth:
+                    tlat, tlon = xy2deg(x[i], y[i])
+                    lat.append(round(tlat, 9))
+                    lon.append(round(tlon, 9))
+                    alt.append(round(a[i] * 0.3048, 3))
+                    depth.append(round(-1*(cd+sensorDepth), 3))
+                    lx = x[i]
+                    ly = y[i]
+                    ld = cd
 
     return lat, lon, alt, depth
 
@@ -55,6 +56,7 @@ snrFile = 'Sonar0004.sl2.csv'   # Data file name
 gridSize = 25                   # Points decimation grid size in meters
 dDif = 0.5                      # Slope detection ratio meters/meter
 sensorDepth = 0.1               # Sonar sensor depth in meters
+maxDepth = 8                    # Maximal depth filter
 
 snrData = pandas.read_csv(snrFile)
 posX = snrData['PositionX']
@@ -70,7 +72,7 @@ else:
     print('Bad data file!')
     exit()
 
-lat, lon, alt, depth = processData(posX, posY, alt_ft, depth_ft, depth_valid, gridSize, dDif, sensorDepth)
+lat, lon, alt, depth = processData(posX, posY, alt_ft, depth_ft, depth_valid, gridSize, dDif, sensorDepth, maxDepth)
 
 print(len(lat), 'points from ', MAX, ' selected.')
 
